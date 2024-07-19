@@ -13,9 +13,21 @@ class JSONData {
 
     static var tableViewTypesJson = JSON(parseJSON: """
         [
-          {"id": "01", "title": "UITableView via Section"},
-          {"id": "02", "title": "UITableView without Section"}
+          {
+            "sectionTitle": "TableView",
+            "data": [
+              {"id": "01", "title": "UITableView via Section"},
+              {"id": "02", "title": "UITableView without Section"}
+            ]
+          },
+          {
+            "sectionTitle": "Parallax",
+            "data": [
+              {"id": "03", "title": "Parallax Cell"}
+            ]
+          }
         ]
+
     """)
 
 

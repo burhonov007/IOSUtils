@@ -18,17 +18,20 @@ class WelcomeVC: UIViewController {
         cellClass: UITableViewCell.self,
         style: .insetGrouped,
         config: { json, cell, indexPath in
-            cell.textLabel?.text = json["title"].stringValue
+            if json["data"][indexPath.row]["id"].stringValue == "03" {
+                cell.imageView?.image = UIImage(named: "history7")
+                cell.imageView?.addParallax(minRelativeValue: -30, maxRelativeValue: 30)
+            }
+            cell.textLabel?.text = json["data"][indexPath.row]["title"].stringValue
         },
         selectHandler: { json, index in
-            print(json)
-            if json["id"].stringValue == "01" {
+            if json["data"][index.row]["id"].stringValue == "01" {
                 let vc = TableViewViaSection()
-                vc.title = json["title"].stringValue
+                vc.title = json["data"][index.row]["title"].stringValue
                 self.navigationController?.pushViewController(vc, animated: true)
-            } else if json["id"].stringValue == "02" {
+            } else if json["data"][index.row]["id"].stringValue == "02" {
                 let vc = TableViewWithoutSection()
-                vc.title = json["title"].stringValue
+                vc.title = json["data"][index.row]["title"].stringValue
                 self.navigationController?.pushViewController(vc, animated: true)
             }
         }
@@ -45,21 +48,18 @@ class WelcomeVC: UIViewController {
     func setupTable() {
         view.addSubview(reustableTable)
         
-        
-        reustableTable.items = typesData
-        reustableTable.rowCount = { _ in
+        reustableTable.sectionCount = {
             return self.typesData.count
+        }
+        reustableTable.items = typesData
+        reustableTable.rowCount = {
+            return self.typesData[$0]["data"].count
         }
         
         reustableTable.backgroundColor = .clear
         
         reustableTable.headerTitle = {
-            switch $0 {
-            case 0:
-                return "UITableView"
-            default:
-                return ""
-            }
+            return self.typesData[$0]["sectionTitle"].stringValue
         }
         
         reustableTable.snp.makeConstraints { make in
