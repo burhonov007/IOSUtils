@@ -14,21 +14,7 @@ class TableViewWithoutSection: UIViewController {
     
     
     let cardData = JSONData.cardsJSON["data"].arrayValue
-    lazy var newTableView = GenericTableView(items: self.cardData, cellClass: SecondCell.self) { json, cell, _ in
-        cell.imgView.image = UIImage(named: json["imgName"].stringValue)
-        cell.userNameLbl.text = json["userName"].stringValue.uppercased()
-        cell.cardNameLbl.text = json["cardName"].stringValue.uppercased()
-        
-        if let amount = json["amount"].string {
-            cell.amountLbl.text = amount
-        } else {
-            cell.amountLbl.isHidden = true
-        }
-    } selectHandler: { json, _ in
-        print("++++++++++++++++++++++")
-        print(json)
-        print("++++++++++++++++++++++")
-    }
+    lazy var newTableView = GenericTableView(items: self.cardData, cellClass: SecondCell.self)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,6 +22,25 @@ class TableViewWithoutSection: UIViewController {
     }
     
     func setupTable() {
+        
+        newTableView.config = { json, cell, _ in
+            cell.imgView.image = UIImage(named: json["imgName"].stringValue)
+            cell.userNameLbl.text = json["userName"].stringValue.uppercased()
+            cell.cardNameLbl.text = json["cardName"].stringValue.uppercased()
+            
+            if let amount = json["amount"].string {
+                cell.amountLbl.text = amount
+            } else {
+                cell.amountLbl.isHidden = true
+            }
+        }
+        
+        newTableView.selectHandler = { json, _ in
+            print("++++++++++++++++++++++")
+            print(json)
+            print("++++++++++++++++++++++")
+        }
+        
         newTableView.rowCount = { _ in
             return self.cardData.count
         }

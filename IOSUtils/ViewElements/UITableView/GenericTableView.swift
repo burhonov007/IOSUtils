@@ -15,8 +15,8 @@ class GenericTableView<Cell: UITableViewCell>: UITableView, UITableViewDelegate,
     private let cellIdentifier = "Cell"
     var items: [JSON]
     
-    var config: (JSON, Cell, IndexPath) -> ()
-    var selectHandler: (JSON, IndexPath) -> ()
+    var config: ((JSON, Cell, IndexPath) -> ())?
+    var selectHandler: ((JSON, IndexPath) -> ())?
     
     var rowCount: ((Int) -> (Int))?
     var sectionCount: (() -> (Int))?
@@ -27,7 +27,7 @@ class GenericTableView<Cell: UITableViewCell>: UITableView, UITableViewDelegate,
     var headerTitle: ((Int) -> (String?))?
     var footerTitle: ((Int) -> (String?))?
     
-    init(items: [JSON] = [], cellClass: Cell.Type, style: UITableView.Style = .plain, config: @escaping (JSON, Cell, IndexPath) -> (), selectHandler: @escaping (JSON, IndexPath) -> ()) {
+    init(items: [JSON] = [], cellClass: Cell.Type, style: UITableView.Style = .plain, config: ((JSON, Cell, IndexPath) -> ())? = nil, selectHandler: ((JSON, IndexPath) -> ())? = nil) {
         self.items = items
         self.config = config
         self.selectHandler = selectHandler
@@ -54,18 +54,18 @@ class GenericTableView<Cell: UITableViewCell>: UITableView, UITableViewDelegate,
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = self.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! Cell
         if let _ = sectionCount?() {
-            config(items[indexPath.section], cell, indexPath)
+            config?(items[indexPath.section], cell, indexPath)
         } else {
-            config(items[indexPath.row], cell, indexPath)
+            config?(items[indexPath.row], cell, indexPath)
         }
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let _ = sectionCount?() {
-            selectHandler(items[indexPath.section], indexPath)
+            selectHandler?(items[indexPath.section], indexPath)
         } else {
-            selectHandler(items[indexPath.row], indexPath)
+            selectHandler?(items[indexPath.row], indexPath)
         }
         deselectRow(at: indexPath, animated: true)
     }
